@@ -1,4 +1,4 @@
-# programowanie-wspolbierzne
+# programowanie-wspolbiezne
 
 ## Working Group
 
