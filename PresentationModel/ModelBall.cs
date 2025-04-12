@@ -22,14 +22,16 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     {
         private readonly double _borderWidth;
         private readonly double _borderHeight;
-        public ModelBall(double top, double left, LogicIBall underneathBall, double borderWidth, double borderHeight)
+        private readonly double _borderPadding;
+        public ModelBall(double top, double left, LogicIBall underneathBall, double borderWidth, double borderHeight, double borderPadding)
         {
             _borderWidth = borderWidth;
             _borderHeight = borderHeight;
+            _borderPadding = borderPadding;
             TopBackingField = top;
             LeftBackingField = left;
             underneathBall.NewPositionNotification += NewPositionNotification;
-            Diameter = 20.0;
+            
         }
 
         #region IBall
@@ -39,7 +41,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
             get { return TopBackingField; }
             private set
             {
-                double maxTop = _borderHeight - Diameter - 8;
+                double maxTop = _borderHeight - Diameter - 2 * _borderPadding;
                 double clampedValue = Math.Clamp(value, 0, maxTop);
                 if (TopBackingField == clampedValue)
                 {
@@ -54,7 +56,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
             get { return LeftBackingField; }
             private set
             {
-                double maxLeft = _borderWidth - Diameter - 8;
+                double maxLeft = _borderWidth - Diameter - 2 * _borderPadding;
                 double clampedValue = Math.Clamp(value, 0, maxLeft);
                 if (LeftBackingField == clampedValue)
                 {

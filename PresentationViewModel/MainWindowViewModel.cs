@@ -63,6 +63,13 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             get => _borderHeight;
             set => Set(ref _borderHeight, value);
         }
+
+        private double _borderPadding = 4;
+        public double BorderPadding
+        {
+            get => _borderPadding;
+            set => Set(ref _borderPadding, value);
+        }
         #endregion
 
         #region public API
@@ -71,7 +78,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         {
             if (Disposed)
                 throw new ObjectDisposedException(nameof(MainWindowViewModel));
-            ModelLayer.Start(numberOfBalls, BorderWidth, BorderHeight);
+            ModelLayer.Start(numberOfBalls, BorderWidth, BorderHeight, BorderPadding);
             Observer.Dispose();
         }
 
@@ -88,7 +95,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 throw new ObjectDisposedException(nameof(MainWindowViewModel));
 
             Balls.Clear();
-            ModelLayer.Start(BallCount, BorderWidth, BorderHeight);
+            ModelLayer.Start(BallCount, BorderWidth, BorderHeight, BorderPadding);
         }
         private bool CanSetBalls()
         {

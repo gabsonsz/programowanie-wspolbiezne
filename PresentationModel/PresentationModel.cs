@@ -44,13 +44,9 @@ namespace TP.ConcurrentProgramming.Presentation.Model
             return eventObservable.Subscribe(x => observer.OnNext(x.EventArgs.Ball), ex => observer.OnError(ex), () => observer.OnCompleted());
         }
 
-        public override void Start(int numberOfBalls, double borderWidth, double borderHeight)
+        public override void Start(int numberOfBalls, double borderWidth, double borderHeight, double borderPadding)
         {
-            layerBellow.Start(numberOfBalls, (pos, ball) =>
-            {
-                ModelBall newBall = new ModelBall(pos.y, pos.x, ball, borderWidth, borderHeight);
-                BallChanged?.Invoke(this, new BallChaneEventArgs { Ball = newBall });
-            });
+            layerBellow.Start(numberOfBalls, (pos, ball) => StartHandler(pos, ball, borderWidth, borderHeight, borderPadding));
         }
 
         #endregion ModelAbstractApi
@@ -67,6 +63,11 @@ namespace TP.ConcurrentProgramming.Presentation.Model
         private readonly IObservable<EventPattern<BallChaneEventArgs>> eventObservable = null;
         private readonly UnderneathLayerAPI layerBellow = null;
 
+        private void StartHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball,double borderWidth, double borderHeight, double borderPadding)
+        {
+            ModelBall newBall = new ModelBall(position.y, position.x, ball, borderWidth, borderHeight, borderPadding) { Diameter = 20.0 };
+            BallChanged.Invoke(this, new BallChaneEventArgs() { Ball = newBall });
+        }
         #endregion private
 
         #region TestingInfrastructure
