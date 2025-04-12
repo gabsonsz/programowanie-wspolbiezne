@@ -8,8 +8,9 @@
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
-    
-    <StackPanel Margin="10">
+
+    <Viewbox Stretch="Uniform">
+        <StackPanel Margin="10">
         <StackPanel Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Top">
             <TextBlock Text="Liczba piłek: " VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBox Width="50" Text="{Binding BallCount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0"/>
@@ -38,5 +39,8 @@
             </ItemsControl>
         </Border>
     </StackPanel>
+    </Viewbox>
+    
+    
 
 </Window>
