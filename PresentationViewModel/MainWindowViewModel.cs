@@ -36,18 +36,19 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 
         #region Properties
 
-        private int _ballCount;
-        public int BallCount
+        private string _ballCountInput;
+        public string BallCountInput
         {
-            get => _ballCount;
+            get => _ballCountInput;
             set
             {
-                if (Set(ref _ballCount, value))
+                if (Set(ref _ballCountInput, value))
                 {
                     (SetBallsCommand as RelayCommand)?.RaiseCanExecuteChanged();
                 }
             }
         }
+        private int BallCount => int.TryParse(BallCountInput, out int result) ? result : 0;
 
         #endregion
 
@@ -76,7 +77,13 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             Balls.Clear();
             ModelLayer.Start(BallCount);
         }
-        private bool CanSetBalls() => BallCount > 0 && BallCount < 20;
+        private bool CanSetBalls()
+        {
+            if (!int.TryParse(BallCountInput, out int parsedValue))
+                return false;
+            return parsedValue > 0 && parsedValue < 20;
+        }
+        
 
         #endregion
 

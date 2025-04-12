@@ -9,6 +9,7 @@
 //  by introducing yourself and telling us what you do with this community.
 //_____________________________________________________________________________________________________________________________________
 
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -23,7 +24,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     {
       TopBackingField = top;
       LeftBackingField = left;
-      underneathBall.NewPositionNotification += NewPositionNotification;
+      underneathBall.NewPositionNotification += NewPositionNotification;      
     }
 
     #region IBall
@@ -33,21 +34,28 @@ namespace TP.ConcurrentProgramming.Presentation.Model
       get { return TopBackingField; }
       private set
       {
-        if (TopBackingField == value)
-          return;
-        TopBackingField = value;
-        RaisePropertyChanged();
+                double maxTop = 420 - Diameter - 8;
+                double clampedValue = Math.Clamp(value, 0, maxTop);
+                if (TopBackingField == clampedValue)
+                {
+                    return;
+                }
+                TopBackingField = clampedValue;
+                RaisePropertyChanged();
       }
     }
-
     public double Left
     {
       get { return LeftBackingField; }
       private set
       {
-        if (LeftBackingField == value)
-          return;
-        LeftBackingField = value;
+        double maxLeft = 400 - Diameter - 8;
+        double clampedValue = Math.Clamp(value, 0, maxLeft);
+        if (LeftBackingField == clampedValue)
+        {
+            return;
+        }          
+        LeftBackingField = clampedValue;
         RaisePropertyChanged();
       }
     }
