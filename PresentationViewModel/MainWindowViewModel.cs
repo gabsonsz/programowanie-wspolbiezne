@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using TP.ConcurrentProgramming.Presentation.Model;
 using TP.ConcurrentProgramming.Presentation.ViewModel.MVVMLight;
 using ModelIBall = TP.ConcurrentProgramming.Presentation.Model.IBall;
@@ -20,19 +21,40 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
     #region ctor
 
     public MainWindowViewModel() : this(null)
-    { }
+    {
+            SetBallsCommand = new RelayCommand(SetBalls, CanSetBalls);
+    }
 
     internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
     {
       ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
       Observer = ModelLayer.Subscribe<ModelIBall>(x => Balls.Add(x));
+      SetBallsCommand = new RelayCommand(SetBalls, CanSetBalls);
     }
 
-    #endregion ctor
+        #endregion ctor
 
-    #region public API
+        #region Properties
 
-    public void Start(int numberOfBalls)
+        private int _ballCount;
+        public int BallCount
+        {
+            get => _ballCount;
+            set => Set(ref _ballCount, value);
+            //set
+            //{
+            //    if(Set(ref _ballCount, value))
+            //    {
+            //        (SetBallsCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            //    }
+            //}
+        }
+
+        #endregion
+
+        #region public API
+
+        public void Start(int numberOfBalls)
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(MainWindowViewModel));
@@ -42,11 +64,26 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 
     public ObservableCollection<ModelIBall> Balls { get; } = new ObservableCollection<ModelIBall>();
 
-    #endregion public API
+        #endregion public API
 
-    #region IDisposable
+        #region Commands
+        public ICommand SetBallsCommand { get; }
 
-    protected virtual void Dispose(bool disposing)
+        private void SetBalls()
+        {
+            if (Disposed)
+                throw new ObjectDisposedException(nameof(MainWindowViewModel));
+
+            Balls.Clear();
+            ModelLayer.Start(BallCount);
+        }
+        private bool CanSetBalls() => BallCount > 0;
+
+        #endregion
+
+        #region IDisposable
+
+        protected virtual void Dispose(bool disposing)
     {
       if (!Disposed)
       {

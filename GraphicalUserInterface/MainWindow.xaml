@@ -3,12 +3,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:TP.ConcurrentProgramming.Presentation.ViewModel;assembly=TP.ConcurrentProgramming.PresentationViewModel"
-        mc:Ignorable="d"
+        xmlns:vm="clr-namespace:TP.ConcurrentProgramming.Presentation.ViewModel;assembly=TP.ConcurrentProgramming.PresentationViewModel" mc:Ignorable="d"
         Title="Presentation layer targeting reactive behaviour" Height="auto" Width="auto">
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
+    
     <StackPanel Margin="10">
         <StackPanel Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Top">
             <TextBlock Text="Liczba piłek: " VerticalAlignment="Center" Margin="0,0,5,0"/>
