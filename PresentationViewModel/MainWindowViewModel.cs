@@ -50,6 +50,19 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         }
         private int BallCount => int.TryParse(BallCountInput, out int result) ? result : 0;
 
+        private double _borderWidth = 400;
+        public double BorderWidth
+        {
+            get => _borderWidth;
+            set => Set(ref _borderWidth, value);
+        }
+
+        private double _borderHeight = 420;
+        public double BorderHeight
+        {
+            get => _borderHeight;
+            set => Set(ref _borderHeight, value);
+        }
         #endregion
 
         #region public API
@@ -58,7 +71,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         {
             if (Disposed)
                 throw new ObjectDisposedException(nameof(MainWindowViewModel));
-            ModelLayer.Start(numberOfBalls);
+            ModelLayer.Start(numberOfBalls, BorderWidth, BorderHeight);
             Observer.Dispose();
         }
 
@@ -75,7 +88,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 throw new ObjectDisposedException(nameof(MainWindowViewModel));
 
             Balls.Clear();
-            ModelLayer.Start(BallCount);
+            ModelLayer.Start(BallCount, BorderWidth, BorderHeight);
         }
         private bool CanSetBalls()
         {
@@ -83,7 +96,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 return false;
             return parsedValue > 0 && parsedValue < 20;
         }
-        
+
 
         #endregion
 

@@ -18,23 +18,28 @@ using LogicIBall = TP.ConcurrentProgramming.BusinessLogic.IBall;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
-  internal class ModelBall : IBall
-  {
-    public ModelBall(double top, double left, LogicIBall underneathBall)
+    internal class ModelBall : IBall
     {
-      TopBackingField = top;
-      LeftBackingField = left;
-      underneathBall.NewPositionNotification += NewPositionNotification;      
-    }
+        private readonly double _borderWidth;
+        private readonly double _borderHeight;
+        public ModelBall(double top, double left, LogicIBall underneathBall, double borderWidth, double borderHeight)
+        {
+            _borderWidth = borderWidth;
+            _borderHeight = borderHeight;
+            TopBackingField = top;
+            LeftBackingField = left;
+            underneathBall.NewPositionNotification += NewPositionNotification;
+            Diameter = 20.0;
+        }
 
-    #region IBall
+        #region IBall
 
-    public double Top
-    {
-      get { return TopBackingField; }
-      private set
-      {
-                double maxTop = 420 - Diameter - 8;
+        public double Top
+        {
+            get { return TopBackingField; }
+            private set
+            {
+                double maxTop = _borderHeight - Diameter - 8;
                 double clampedValue = Math.Clamp(value, 0, maxTop);
                 if (TopBackingField == clampedValue)
                 {
@@ -42,61 +47,61 @@ namespace TP.ConcurrentProgramming.Presentation.Model
                 }
                 TopBackingField = clampedValue;
                 RaisePropertyChanged();
-      }
-    }
-    public double Left
-    {
-      get { return LeftBackingField; }
-      private set
-      {
-        double maxLeft = 400 - Diameter - 8;
-        double clampedValue = Math.Clamp(value, 0, maxLeft);
-        if (LeftBackingField == clampedValue)
+            }
+        }
+        public double Left
         {
-            return;
-        }          
-        LeftBackingField = clampedValue;
-        RaisePropertyChanged();
-      }
+            get { return LeftBackingField; }
+            private set
+            {
+                double maxLeft = _borderWidth - Diameter - 8;
+                double clampedValue = Math.Clamp(value, 0, maxLeft);
+                if (LeftBackingField == clampedValue)
+                {
+                    return;
+                }
+                LeftBackingField = clampedValue;
+                RaisePropertyChanged();
+            }
+        }
+
+        public double Diameter { get; init; } = 0;
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion INotifyPropertyChanged
+
+        #endregion IBall
+
+        #region private
+
+        private double TopBackingField;
+        private double LeftBackingField;
+
+        private void NewPositionNotification(object sender, IPosition e)
+        {
+            Top = e.y; Left = e.x;
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion private
+
+        #region testing instrumentation
+
+        [Conditional("DEBUG")]
+        internal void SetLeft(double x)
+        { Left = x; }
+
+        [Conditional("DEBUG")]
+        internal void SettTop(double x)
+        { Top = x; }
+
+        #endregion testing instrumentation
     }
-
-    public double Diameter { get; init; } = 0;
-
-    #region INotifyPropertyChanged
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    #endregion INotifyPropertyChanged
-
-    #endregion IBall
-
-    #region private
-
-    private double TopBackingField;
-    private double LeftBackingField;
-
-    private void NewPositionNotification(object sender, IPosition e)
-    {
-      Top = e.y; Left = e.x;
-    }
-
-    private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    #endregion private
-
-    #region testing instrumentation
-
-    [Conditional("DEBUG")]
-    internal void SetLeft(double x)
-    { Left = x; }
-
-    [Conditional("DEBUG")]
-    internal void SettTop(double x)
-    { Top = x; }
-
-    #endregion testing instrumentation
-  }
 }
