@@ -42,7 +42,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
         newInstance.CheckBallChangedEvent(x => Assert.IsTrue(x));
         IDisposable subscription = newInstance.Subscribe(x => { });
         newInstance.CheckBallChangedEvent(x => Assert.IsFalse(x));
-        newInstance.Start(10);
+        newInstance.Start(10, 420, 400, 4);
         Assert.AreEqual<int>(10, underneathLayerFixture.NumberOfBalls);
         subscription.Dispose();
         newInstance.CheckBallChangedEvent(x => Assert.IsTrue(x));

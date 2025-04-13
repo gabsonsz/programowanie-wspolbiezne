@@ -57,7 +57,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             set => Set(ref _borderWidth, value);
         }
 
-        private double _borderHeight = 420;
+        private double _borderHeight = 400;
         public double BorderHeight
         {
             get => _borderHeight;
