@@ -35,6 +35,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         #endregion ctor
 
         #region Properties
+        private bool BallsSetted= false;
 
         private string _ballCountInput;
         public string BallCountInput
@@ -80,6 +81,8 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 throw new ObjectDisposedException(nameof(MainWindowViewModel));
             ModelLayer.Start(numberOfBalls, BorderWidth, BorderHeight, BorderPadding);
             Observer.Dispose();
+            
+            
         }
 
         public ObservableCollection<ModelIBall> Balls { get; } = new ObservableCollection<ModelIBall>();
@@ -95,13 +98,18 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 throw new ObjectDisposedException(nameof(MainWindowViewModel));
 
             Balls.Clear();
-            ModelLayer.Start(BallCount, BorderWidth, BorderHeight, BorderPadding);
+            this.Start(BallCount);
+            BallsSetted= true;
         }
         private bool CanSetBalls()
         {
-            if (!int.TryParse(BallCountInput, out int parsedValue))
-                return false;
-            return parsedValue > 0 && parsedValue < 20;
+            if (!BallsSetted)
+            {
+                if (!int.TryParse(BallCountInput, out int parsedValue))
+                    return false;
+                return parsedValue > 0 && parsedValue < 20;
+            }
+            return false;
         }
 
 
