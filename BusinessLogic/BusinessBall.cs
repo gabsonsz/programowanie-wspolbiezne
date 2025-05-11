@@ -12,8 +12,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 {
   internal class Ball : IBall
   {
-    public Ball(Data.IBall ball)
+    public Ball(Data.IBall ball, double tw,double th)
     {
+            TableWidth = tw;
+            TableHeight = th;
       ball.NewPositionNotification += RaisePositionChangeEvent;
     }
 
@@ -21,15 +23,32 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
     public event EventHandler<IPosition>? NewPositionNotification;
 
-    #endregion IBall
+        #endregion IBall
 
-    #region private
+        #region private
+        public double TableWidth { get; }
+        public double TableHeight { get; }
+
 
     private void RaisePositionChangeEvent(object? sender, Data.IVector e)
     {
       NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
     }
 
+    private void WallCollision(Data.IBall ball)
+        {
+            //wall collision
+            double radius = ball.Diameter/2;
+            if (ball.Position.x + radius >= TableWidth || ball.Position.x - radius <= 0)
+            {                
+                ball.Velocity.x = -ball.Velocity.x;
+            }
+            if (ball.Position.y + radius >= TableHeight || ball.Position.y - radius <= 0)
+            {
+                ball.Velocity.y = -ball.Velocity.y;
+            }
+            
+        }
     #endregion private
   }
 }

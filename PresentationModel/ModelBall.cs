@@ -20,8 +20,8 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 {
     internal class ModelBall : IBall
     {
-        private readonly double _borderWidth;
-        private readonly double _borderHeight;
+        public  double TableWidth =>_borderWidth;
+        public  double TableHeight => _borderHeight;
         private readonly double _borderPadding;
         public ModelBall(double top, double left, LogicIBall underneathBall, double borderWidth, double borderHeight, double borderPadding)
         {

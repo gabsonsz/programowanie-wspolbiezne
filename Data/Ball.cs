@@ -20,7 +20,8 @@ namespace TP.ConcurrentProgramming.Data
       Velocity = initialVelocity;
       Mass = mass;
       Diameter = diameter;
-      ballThread = new System.Threading.Thread(threadLoop);
+      ThreadStart ts = new ThreadStart(threadLoop);
+      ballThread = new System.Threading.Thread(ts);
       ballThread.Start();
     }
 
@@ -33,8 +34,8 @@ namespace TP.ConcurrentProgramming.Data
     public IVector Velocity { get; set; }
     public IVector Position { get; set; }
 
-    public double Mass;
-    public double Diameter;
+    public double Mass { get; }
+    public double Diameter { get;  }
 
         #endregion IBall
 
