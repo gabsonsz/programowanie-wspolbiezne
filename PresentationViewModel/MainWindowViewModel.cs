@@ -51,21 +51,21 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         }
         private int BallCount => int.TryParse(BallCountInput, out int result) ? result : 0;
 
-        private double _borderWidth = 400;
+        private double _borderWidth ;
         public double BorderWidth
         {
             get => _borderWidth;
             set => Set(ref _borderWidth, value);
         }
 
-        private double _borderHeight = 400;
+        private double _borderHeight ;
         public double BorderHeight
         {
             get => _borderHeight;
             set => Set(ref _borderHeight, value);
         }
 
-        private double _borderPadding = 4;
+        private double _borderPadding ;
         public double BorderPadding
         {
             get => _borderPadding;

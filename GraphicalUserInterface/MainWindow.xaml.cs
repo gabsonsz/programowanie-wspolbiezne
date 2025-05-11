@@ -25,7 +25,12 @@ namespace TP.ConcurrentProgramming.PresentationView
       MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
       double screenWidth = SystemParameters.PrimaryScreenWidth;
       double screenHeight = SystemParameters.PrimaryScreenHeight;
+
+            viewModel.BorderHeight = screenHeight/2;
+            viewModel.BorderWidth = screenWidth/2;
+            viewModel.BorderPadding = 4;
         }
+
 
     /// <summary>
     /// Raises the <seealso cref="System.Windows.Window.Closed"/> event.
