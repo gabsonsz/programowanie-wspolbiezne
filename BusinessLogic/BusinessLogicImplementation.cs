@@ -43,7 +43,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
       if (upperLayerHandler == null)
         throw new ArgumentNullException(nameof(upperLayerHandler));
-      layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.y), new Ball(databall, width, height, border)));
+            barrier = new Barrier(numberOfBalls);
+            layerBellow.Start(numberOfBalls, (startingPosition, databall) =>
+            {
+                var ball = new Ball(databall, width, height, border,ballList,barrier);
+                ballList.Add(ball);
+                upperLayerHandler(new Position(startingPosition.x, startingPosition.y), ball);
+            });
     }
 
     #endregion BusinessLogicAbstractAPI
@@ -51,6 +57,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     #region private
 
     private bool Disposed = false;
+        private List<Ball> ballList = new List<Ball>();
+        private Barrier barrier;
 
     private readonly UnderneathLayerAPI layerBellow;
 

@@ -8,22 +8,27 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using System.Numerics;
+
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
-  internal class Ball : IBall
-  {
+    internal class Ball : IBall
+    {
         Data.IBall dataBall;
-        //List<Ball> ballList;
-        private static object ballLock= new object();
+        List<Ball> ballList = new List<Ball>();
+        private Barrier barrier;
+        private static object ballLock = new object();
 
-    public Ball(Data.IBall ball, double tw, double th, double border)
+        public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls, Barrier barrier)
         {
             dataBall = ball;
             TableWidth = tw;
             TableHeight = th;
             TableBorder = border;
             ball.NewPositionNotification += RaisePositionChangeEvent;
-            //this.ballList = ballList;
+            ballList = otherBalls;
+            this.barrier = barrier;
+
         }
 
         #region IBall
@@ -38,28 +43,45 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         public double TableBorder { get; }
 
 
-    private void RaisePositionChangeEvent(object? sender, Data.IVector e)
-    {
-        lock (ballLock) {
-            WallCollision(e);
-            NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
+        private void RaisePositionChangeEvent(object? sender, Data.IVector e)
+        {
+            lock (ballLock)
+            {
+                WallCollision(e);
+                NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
+            }
+
         }
-      
-    }        
         private void WallCollision(Data.IVector position)
-        {            
-            double radius = dataBall.Diameter / 2;
-            if (position.x  >= TableWidth - dataBall.Diameter - 2 * TableBorder || position.x  <= 0)
-            {                
+        {
+
+            if (position.x >= TableWidth - dataBall.Diameter - 2 * TableBorder || position.x <= 0)
+            {
                 dataBall.Velocity.x = -dataBall.Velocity.x;
             }
-            if (position.y >= TableHeight - dataBall.Diameter - 2 * TableBorder || position.y  <= 0)
+            if (position.y >= TableHeight - dataBall.Diameter - 2 * TableBorder || position.y <= 0)
             {
                 dataBall.Velocity.y = -dataBall.Velocity.y;
             }
-            
+
         }
 
-    #endregion private
-  }
+        private void BallCollision()
+        {
+            foreach (Ball other in ballList)
+            {
+                if (other == this) continue;
+
+                double x1 = dataBall.Position.x;
+                double y1 = dataBall.Position.y;
+
+                double x2 = other.dataBall.Position.x;
+                double y2 =other.dataBall.Position.y;
+              
+
+            }
+        }
+
+        #endregion private
+    }
 }
