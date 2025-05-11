@@ -18,7 +18,7 @@
             </StackPanel>
 
 
-            <Border  BorderThickness="{Binding BorderPadding}" BorderBrush="DarkMagenta" Height="{Binding BorderHeight}" Width="{Binding BorderHeight}" >
+            <Border  BorderThickness="{Binding BorderPadding}" BorderBrush="DarkMagenta" Height="{Binding BorderHeight}" Width="{Binding BorderWidth}" >
                 <ItemsControl ItemsSource="{Binding Balls}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

@@ -46,7 +46,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
         public override void Start(int numberOfBalls, double borderWidth, double borderHeight, double borderPadding)
         {
-            layerBellow.Start(numberOfBalls, (pos, ball) => StartHandler(pos, ball, borderWidth, borderHeight, borderPadding));
+            layerBellow.Start(numberOfBalls, (pos, ball) => StartHandler(pos, ball, borderWidth, borderHeight, borderPadding), borderWidth, borderHeight, borderPadding);
         }
 
         #endregion ModelAbstractApi

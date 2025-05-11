@@ -20,9 +20,9 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 {
     internal class ModelBall : IBall
     {
-        public  double TableWidth =>_borderWidth;
-        public  double TableHeight => _borderHeight;
-        private readonly double _borderPadding;
+        public  double _borderWidth;
+        public  double _borderHeight;
+        public  double _borderPadding;
         public ModelBall(double top, double left, LogicIBall underneathBall, double borderWidth, double borderHeight, double borderPadding)
         {
             _borderWidth = borderWidth;
@@ -68,6 +68,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
         }
 
         public double Diameter { get; init; } = 0;
+  
 
         #region INotifyPropertyChanged
 

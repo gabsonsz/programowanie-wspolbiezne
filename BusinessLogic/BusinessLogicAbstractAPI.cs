@@ -25,7 +25,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
     public static readonly Dimensions GetDimensions = new(10.0, 10.0, 10.0);
 
-    public abstract void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler);
+    public abstract void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler, double width, double height, double border);
 
     #region IDisposable
 
@@ -62,6 +62,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
   {
         double TableWidth { get; }
         double TableHeight { get; }
+        double TableBorder { get; } //init;
         event EventHandler<IPosition> NewPositionNotification;
   }
 }

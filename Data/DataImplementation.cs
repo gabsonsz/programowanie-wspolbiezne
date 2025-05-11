@@ -17,10 +17,10 @@ namespace TP.ConcurrentProgramming.Data
   {
     #region ctor
 
-    public DataImplementation()
-    {
-      MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
-    }
+    //public DataImplementation()
+    //{
+    //  MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
+    //}
 
     #endregion ctor
 
@@ -36,7 +36,8 @@ namespace TP.ConcurrentProgramming.Data
       for (int i = 0; i < numberOfBalls; i++)
       {
         Vector startingPosition = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
-        Ball newBall = new(startingPosition, startingPosition,100,20);
+        Vector startingSpeed = new(5, 5);
+        Ball newBall = new(startingPosition, startingSpeed,100,20);
         upperLayerHandler(startingPosition, newBall);
         BallsList.Add(newBall);
       }
@@ -52,7 +53,7 @@ namespace TP.ConcurrentProgramming.Data
       {
         if (disposing)
         {
-          MoveTimer.Dispose();
+          //MoveTimer.Dispose();
           BallsList.Clear();
         }
         Disposed = true;
@@ -75,22 +76,22 @@ namespace TP.ConcurrentProgramming.Data
     //private bool disposedValue;
     private bool Disposed = false;
 
-    private readonly Timer MoveTimer;
+    //private readonly Timer MoveTimer;
     private Random RandomGenerator = new();
     private List<Ball> BallsList = [];
 
-    private void Move(object? x)
-    {
-        foreach (Ball item in BallsList)
-                //item.Move(new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
-        item.Move();
-     }
+        //private void Move(object? x)
+        //{
+        //    foreach (Ball item in BallsList)
+        //        //item.Move(new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
+        //        item.Move();
+        //}
 
-    #endregion private
+        #endregion private
 
-    #region TestingInfrastructure
+        #region TestingInfrastructure
 
-    [Conditional("DEBUG")]
+        [Conditional("DEBUG")]
     internal void CheckBallsList(Action<IEnumerable<IBall>> returnBallsList)
     {
       returnBallsList(BallsList);

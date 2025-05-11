@@ -12,43 +12,54 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 {
   internal class Ball : IBall
   {
-    public Ball(Data.IBall ball, double tw,double th)
-    {
+        Data.IBall dataBall;
+        //List<Ball> ballList;
+        private static object ballLock= new object();
+
+    public Ball(Data.IBall ball, double tw, double th, double border)
+        {
+            dataBall = ball;
             TableWidth = tw;
             TableHeight = th;
-      ball.NewPositionNotification += RaisePositionChangeEvent;
-    }
+            TableBorder = border;
+            ball.NewPositionNotification += RaisePositionChangeEvent;
+            //this.ballList = ballList;
+        }
 
-    #region IBall
+        #region IBall
 
-    public event EventHandler<IPosition>? NewPositionNotification;
+        public event EventHandler<IPosition>? NewPositionNotification;
 
         #endregion IBall
 
         #region private
         public double TableWidth { get; }
         public double TableHeight { get; }
+        public double TableBorder { get; }
 
 
     private void RaisePositionChangeEvent(object? sender, Data.IVector e)
     {
-      NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
-    }
-
-    private void WallCollision(Data.IBall ball)
-        {
-            //wall collision
-            double radius = ball.Diameter/2;
-            if (ball.Position.x + radius >= TableWidth || ball.Position.x - radius <= 0)
+        lock (ballLock) {
+            WallCollision(e);
+            NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
+        }
+      
+    }        
+        private void WallCollision(Data.IVector position)
+        {            
+            double radius = dataBall.Diameter / 2;
+            if (position.x  >= TableWidth - dataBall.Diameter - 2 * TableBorder || position.x  <= 0)
             {                
-                ball.Velocity.x = -ball.Velocity.x;
+                dataBall.Velocity.x = -dataBall.Velocity.x;
             }
-            if (ball.Position.y + radius >= TableHeight || ball.Position.y - radius <= 0)
+            if (position.y >= TableHeight - dataBall.Diameter - 2 * TableBorder || position.y  <= 0)
             {
-                ball.Velocity.y = -ball.Velocity.y;
+                dataBall.Velocity.y = -dataBall.Velocity.y;
             }
             
         }
+
     #endregion private
   }
 }
