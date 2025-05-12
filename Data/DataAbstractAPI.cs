@@ -31,6 +31,8 @@ namespace TP.ConcurrentProgramming.Data
 
     public abstract void Dispose();
 
+        public abstract void StopBalls();
+
     #endregion IDisposable
 
     #region private

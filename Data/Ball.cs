@@ -57,6 +57,7 @@ namespace TP.ConcurrentProgramming.Data
             isRunning = false;
             ballThread?.Join();
         }
+
     private void RaiseNewPositionChangeNotification()
     {
       NewPositionNotification?.Invoke(this, Position);

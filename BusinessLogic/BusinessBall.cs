@@ -8,8 +8,6 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
-using System.Numerics;
-
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
     internal class Ball : IBall
@@ -17,6 +15,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         Data.IBall dataBall;
         List<Ball> ballList = new List<Ball>();
         private Barrier barrier;
+        private Barrier barrier2 = new Barrier(1);
         private static object ballLock = new object();
 
         public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls, Barrier barrier)
@@ -45,12 +44,15 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         private void RaisePositionChangeEvent(object? sender, Data.IVector e)
         {
+            barrier.SignalAndWait();
             lock (ballLock)
             {
                 WallCollision(e);
                 BallCollision();
+                barrier2.SignalAndWait();
                 NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
             }
+            
 
         }
         private void WallCollision(Data.IVector position)
@@ -91,17 +93,22 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     double nx = dx / euclideanDistance;
                     double ny = dy / euclideanDistance;
 
+                    //Velocity
                     double v1x = dataBall.Velocity.x;
                     double v1y = dataBall.Velocity.y;
-
                     double v2x = other.dataBall.Velocity.x;
                     double v2y = other.dataBall.Velocity.y;
 
-                    double v1n = v1x * nx + v1y * ny;  
-                    double v2n = v2x * nx + v2y * ny;  
+                    //Mass
+                    double m1 = dataBall.Mass;
+                    double m2 = other.dataBall.Mass;
 
-                    double v1nAfter = v2n;
-                    double v2nAfter = v1n;
+                    //product of Velocity and normal
+                    double v1n = v1x * nx + v1y * ny;
+                    double v2n = v2x * nx + v2y * ny;
+
+                    double v1nAfter = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2);
+                    double v2nAfter = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2);
 
                     double dv1x = (v1nAfter - v1n) * nx;
                     double dv1y = (v1nAfter - v1n) * ny;
@@ -113,7 +120,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     other.dataBall.Velocity.x += dv2x;
                     other.dataBall.Velocity.y += dv2y;
 
-                    double overlap = 20 - euclideanDistance;  
+                    double overlap = 20 - euclideanDistance;
                     if (overlap > 0)
                     {
                         double adjustX = nx * overlap * 0.5;
@@ -124,43 +131,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                         other.dataBall.Position.x -= adjustX;
                         other.dataBall.Position.y -= adjustY;
                     }
-
-                    //double v1_x = dataBall.Velocity.x;
-                    //double v1_y = dataBall.Velocity.y;
-
-                    //double v2_x = other.dataBall.Velocity.x;
-                    //double v2_y = other.dataBall.Velocity.y;
-
-                    //double m1 = dataBall.Mass;
-                    //double m2 = other.dataBall.Mass;
-
-                    ////collision normal
-                    //double nx = dx / euclideanDistance;
-                    //double ny = dy / euclideanDistance;
-
-                    ////velocity vector
-                    //double dv_x = v1_x - v2_x;
-                    //double dv_y = v1_y - v2_y;
-
-                    //double adjust = dv_x * nx + dv_y * ny;
-
-                    ////Impulse
-                    //double impulse = (2 * adjust) / (m1 + m2);
-
-                    ////new velocity values
-                    //double v1x = v1_x - impulse * m2 * nx;
-                    //double v1y = v1_y - impulse * m2 * ny;
-
-                    //double v2x = v2_x - impulse * m1 * nx;
-                    //double v2y = v2_y - impulse * m1 * ny;
-
-
-                    //dataBall.Velocity.x = v1x;
-                    //dataBall.Velocity.y = v1y;
-
-                    //other.dataBall.Velocity.x = v2x;
-                    //other.dataBall.Velocity.y = v2y;
-
                 }
 
 

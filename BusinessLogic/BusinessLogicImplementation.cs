@@ -33,6 +33,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
+      layerBellow.StopBalls();
       layerBellow.Dispose();
       Disposed = true;
     }
@@ -52,7 +53,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             });
     }
 
-    #endregion BusinessLogicAbstractAPI
 
     #region private
 
@@ -72,6 +72,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
       returnInstanceDisposed(Disposed);
     }
 
-    #endregion TestingInfrastructure
-  }
+        #endregion TestingInfrastructure
+        #endregion BusinessLogicAbstractAPI
+    }
 }
