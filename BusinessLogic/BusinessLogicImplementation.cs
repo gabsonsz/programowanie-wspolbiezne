@@ -32,12 +32,12 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     public override void Dispose()
     {
       if (Disposed)
-        throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
+      throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
       foreach( var ball in ballList)
             {
                 ball.Dispose();                
             }
-      barrier.Dispose();
+      barrier?.Dispose();
       layerBellow.Dispose();
       Disposed = true;
     }

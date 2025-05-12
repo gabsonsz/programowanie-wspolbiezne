@@ -125,7 +125,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     other.dataBall.Velocity.x += dv2x;
                     other.dataBall.Velocity.y += dv2y;
 
-                    double overlap = 20 - euclideanDistance;
+                    double overlap = minDistance - euclideanDistance;
                     if (overlap > 0)
                     {
                         double adjustX = nx * overlap * 0.5;

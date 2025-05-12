@@ -44,6 +44,11 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
 
     private class BusinessLogicIBallFixture : BusinessLogic.IBall
     {
+            public double TableWidth { get; set; }
+            public double TableHeight { get; set; }
+            public double TableBorder { get; set; }
+
+
       public event EventHandler<IPosition>? NewPositionNotification;
 
       public void Dispose()
