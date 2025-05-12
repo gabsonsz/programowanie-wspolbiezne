@@ -52,8 +52,7 @@ namespace TP.ConcurrentProgramming.Data
       if (!Disposed)
       {
         if (disposing)
-        {
-          //MoveTimer.Dispose();
+        {         
           BallsList.Clear();
         }
         Disposed = true;
@@ -61,13 +60,7 @@ namespace TP.ConcurrentProgramming.Data
       else
         throw new ObjectDisposedException(nameof(DataImplementation));
     }
-        //public override void StopBalls()
-        //{
-        //    foreach (var ball in BallsList)
-        //    {
-        //        ball.Dispose();
-        //    }
-        //}
+       
         public override void Dispose()
     {
       // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
@@ -85,13 +78,7 @@ namespace TP.ConcurrentProgramming.Data
     //private readonly Timer MoveTimer;
     private Random RandomGenerator = new();
     private List<Ball> BallsList = [];
-
-        //private void Move(object? x)
-        //{
-        //    foreach (Ball item in BallsList)
-        //        //item.Move(new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
-        //        item.Move();
-        //}
+               
 
         #endregion private
 

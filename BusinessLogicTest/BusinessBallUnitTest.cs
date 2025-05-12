@@ -8,39 +8,45 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using System.Numerics;
+
 namespace TP.ConcurrentProgramming.BusinessLogic.Test
 {
   [TestClass]
   public class BallUnitTest
   {
-       // [TestMethod]
-        //public void MoveTestMethod()
-        //{
-        //    Barrier barrier = new Barrier(1);
-        //    List<Ball> balls = new List<Ball>();
-        //    DataBallFixture dataBallFixture = new DataBallFixture();
-        //    Ball newInstance = new(dataBallFixture, 400, 400, 50, dataBallFixture, balls, barrier);
-        //    int numberOfCallBackCalled = 0;
-        //    newInstance.NewPositionNotification += (sender, position) => { Assert.IsNotNull(sender); Assert.IsNotNull(position); numberOfCallBackCalled++; };
-        //    dataBallFixture.Move();
-        //    Assert.AreEqual<int>(1, numberOfCallBackCalled);
-        //}
+        [TestMethod]
+        public void MoveTestMethod()
+        {
+            Barrier barrier = new Barrier(1);
+            List<Ball> balls = new List<Ball>();
+            DataBallFixture dataBallFixture = new DataBallFixture(new VectorFixture(0,0), new VectorFixture(0,0));
+            Ball newInstance = new(dataBallFixture, 400, 400, 50, balls, barrier);
+            int numberOfCallBackCalled = 0;
+            newInstance.NewPositionNotification += (sender, position) => { Assert.IsNotNull(sender); Assert.IsNotNull(position); numberOfCallBackCalled++; };
+            dataBallFixture.Move();
+            Assert.AreEqual<int>(1, numberOfCallBackCalled);
+        }
 
         #region testing instrumentation
 
         private class DataBallFixture : Data.IBall
     {
+            public DataBallFixture(Data.IVector Velocity, Data.IVector Position) {
+                this.Velocity = Velocity;
+                this.Position = Position;
+            }
+
             public double Diameter { get; set; } = 20;
             public double Mass { get; set; } = 100;
-      public Data.IVector Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-      public Data.IVector Velocity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+      public Data.IVector Position { get; set; }
+      public Data.IVector Velocity { get; set; }
 
       public event EventHandler<Data.IVector>? NewPositionNotification;
 
       public void Dispose()
         {
-            //smth
-            throw new NotImplementedException();
+
         }
 
       internal void Move()

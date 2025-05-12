@@ -14,8 +14,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
         Data.IBall dataBall;
         List<Ball> ballList = new List<Ball>();
-        private Barrier barrier;
-        //private Barrier barrier2;
+        private Barrier barrier;        
         private static object ballLock = new object();
 
         public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls, Barrier barrier)
