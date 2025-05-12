@@ -61,13 +61,13 @@ namespace TP.ConcurrentProgramming.Data
       else
         throw new ObjectDisposedException(nameof(DataImplementation));
     }
-        public override void StopBalls()
-        {
-            foreach (var ball in BallsList)
-            {
-                ball.Dispose();
-            }
-        }
+        //public override void StopBalls()
+        //{
+        //    foreach (var ball in BallsList)
+        //    {
+        //        ball.Dispose();
+        //    }
+        //}
         public override void Dispose()
     {
       // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

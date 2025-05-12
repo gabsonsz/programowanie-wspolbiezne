@@ -31,7 +31,7 @@ namespace TP.ConcurrentProgramming.Data
 
     public abstract void Dispose();
 
-        public abstract void StopBalls();
+        //public abstract void StopBalls();
 
     #endregion IDisposable
 
@@ -64,6 +64,8 @@ namespace TP.ConcurrentProgramming.Data
     double Diameter { get; }
 
     double Mass { get; }
-    
+     public void Dispose();
+
+
   }
 }

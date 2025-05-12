@@ -15,7 +15,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         Data.IBall dataBall;
         List<Ball> ballList = new List<Ball>();
         private Barrier barrier;
-        private Barrier barrier2 = new Barrier(1);
+        //private Barrier barrier2;
         private static object ballLock = new object();
 
         public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls, Barrier barrier)
@@ -27,7 +27,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             ball.NewPositionNotification += RaisePositionChangeEvent;
             ballList = otherBalls;
             this.barrier = barrier;
-
+           
         }
 
         #region IBall
@@ -41,6 +41,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         public double TableHeight { get; }
         public double TableBorder { get; }
 
+        internal void Dispose()
+        {
+            dataBall.Dispose();
+            barrier.RemoveParticipant();
+        }
 
         private void RaisePositionChangeEvent(object? sender, Data.IVector e)
         {
@@ -48,11 +53,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             lock (ballLock)
             {
                 WallCollision(e);
-                BallCollision();
-                barrier2.SignalAndWait();
+                BallCollision();                
                 NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
             }
-            
+            barrier.SignalAndWait();
+
 
         }
         private void WallCollision(Data.IVector position)
@@ -132,7 +137,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                         other.dataBall.Position.y -= adjustY;
                     }
                 }
-
 
             }
         }

@@ -33,7 +33,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
-      layerBellow.StopBalls();
+      foreach( var ball in ballList)
+            {
+                ball.Dispose();                
+            }
+      barrier.Dispose();
       layerBellow.Dispose();
       Disposed = true;
     }
