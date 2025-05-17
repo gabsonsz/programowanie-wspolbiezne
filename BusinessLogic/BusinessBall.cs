@@ -40,7 +40,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         public double TableHeight { get; }
         public double TableBorder { get; }
 
-        internal void Dispose()
+        internal void Stop()
         {
             dataBall.Stop();
             barrier.RemoveParticipant();
@@ -48,18 +48,17 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         private void RaisePositionChangeEvent(object? sender, Data.IVector e)
         {
-            barrier.SignalAndWait();
+            //barrier.SignalAndWait();
             lock (ballLock)
             {
-                WallCollision(e);
-                BallCollision();
+                Collision(e);
                 NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
             }
-            barrier.SignalAndWait();
+            //barrier.SignalAndWait();
 
 
         }
-        private void WallCollision(Data.IVector position)
+        private void Collision(Data.IVector position)
         {
 
             if (position.x >= TableWidth - dataBall.Diameter - 2 * TableBorder || position.x <= 0)
@@ -71,9 +70,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 dataBall.Velocity.y = -dataBall.Velocity.y;
             }
 
-        }
-        private void BallCollision()
-        {
             foreach (Ball other in ballList)
             {
                 if (other == this) continue;
@@ -136,12 +132,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                             other.dataBall.Position.y -= adjustY;
                         }
                     }
-
-
                 }
-            }
 
-            #endregion private
+                #endregion private
+            }
         }
     }
 }

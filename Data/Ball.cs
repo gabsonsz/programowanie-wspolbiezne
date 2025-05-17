@@ -37,7 +37,7 @@ namespace TP.ConcurrentProgramming.Data
 
     public double Mass { get; }
     public double Diameter { get;  }
-    public int refreshTime {  get; set; }
+        private int refreshTime;
         #endregion IBall
 
         #region private
@@ -63,9 +63,18 @@ namespace TP.ConcurrentProgramming.Data
     {
       NewPositionNotification?.Invoke(this, Position);
     }
+        private void ChangeRefreshTime()
+        {
+            double accualVelocity = Math.Sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
+            int maxRefreshTime = 100;
+            int minRefreshTime = 10;
 
-    internal void Move()
+            double normalizedVelocity= Math.Clamp(accualVelocity, 0.0, 1.0);
+            refreshTime = (int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime));
+        }
+        internal void Move()
     {
+        ChangeRefreshTime();
       Position = new Vector(Position.x + (Velocity.x*refreshTime/1000), Position.y + (Velocity.y*refreshTime/1000));
       RaiseNewPositionChangeNotification();
     }

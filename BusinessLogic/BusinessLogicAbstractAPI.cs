@@ -62,7 +62,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
         double TableWidth { get; }
         double TableHeight { get; }
-        double TableBorder { get; } //init;
+        double TableBorder { get; }
         event EventHandler<IPosition> NewPositionNotification;
     }
 }

@@ -61,7 +61,7 @@ namespace TP.ConcurrentProgramming.Data
     double Diameter { get; }
 
     double Mass { get; }
-    int refreshTime {  get; set; }
+    //double refreshTime {  get; set; }
     public void Stop();
 
 

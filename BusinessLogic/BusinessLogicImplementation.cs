@@ -35,7 +35,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             foreach (var ball in ballList)
             {
-                ball.Dispose();
+                ball.Stop();
             }
             barrier?.Dispose();
             layerBellow.Dispose();
