@@ -57,12 +57,12 @@ namespace TP.ConcurrentProgramming.Data
   {
     event EventHandler<IVector> NewPositionNotification;
     IVector Velocity { get; set; }
-    IVector Position { get; set; }
-
+    IVector Position { get;}
     double Diameter { get; }
 
     double Mass { get; }
-    public void Dispose();
+    int refreshTime {  get; set; }
+    public void Stop();
 
 
   }

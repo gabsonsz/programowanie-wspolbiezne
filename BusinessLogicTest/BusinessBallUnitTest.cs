@@ -44,7 +44,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
       public event EventHandler<Data.IVector>? NewPositionNotification;
 
-      public void Dispose()
+      public void Stop()
         {
 
         }

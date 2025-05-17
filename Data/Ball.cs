@@ -20,6 +20,7 @@ namespace TP.ConcurrentProgramming.Data
       Velocity = initialVelocity;
       Mass = mass;
       Diameter = diameter;
+      refreshTime = 20;
       ThreadStart ts = new ThreadStart(threadLoop);
       ballThread = new System.Threading.Thread(ts);
       ballThread.Start();
@@ -36,26 +37,26 @@ namespace TP.ConcurrentProgramming.Data
 
     public double Mass { get; }
     public double Diameter { get;  }
-
+    public int refreshTime {  get; set; }
         #endregion IBall
 
         #region private
         private Thread ballThread;
         private bool isRunning = true;
+        
 
         private void threadLoop()
         {
             while (isRunning)
             {
                 Move();
-                Thread.Sleep(40);
+                Thread.Sleep(refreshTime);
             }
         }
 
-        public void Dispose()
+        public void Stop()
         {
             isRunning = false;
-            ballThread?.Join();
         }
 
     private void RaiseNewPositionChangeNotification()
@@ -65,7 +66,7 @@ namespace TP.ConcurrentProgramming.Data
 
     internal void Move()
     {
-      Position = new Vector(Position.x + Velocity.x, Position.y + Velocity.y);
+      Position = new Vector(Position.x + (Velocity.x*refreshTime/1000), Position.y + (Velocity.y*refreshTime/1000));
       RaiseNewPositionChangeNotification();
     }
 

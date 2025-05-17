@@ -118,7 +118,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
         public event EventHandler<IVector>? NewPositionNotification = null;
 
-        public void Dispose()
+        public void Stop()
                 {
                 }
       }

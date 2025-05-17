@@ -14,7 +14,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
         Data.IBall dataBall;
         List<Ball> ballList = new List<Ball>();
-        private Barrier barrier;        
+        private Barrier barrier;
         private static object ballLock = new object();
 
         public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls, Barrier barrier)
@@ -26,7 +26,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             ball.NewPositionNotification += RaisePositionChangeEvent;
             ballList = otherBalls;
             this.barrier = barrier;
-           
+
         }
 
         #region IBall
@@ -42,7 +42,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         internal void Dispose()
         {
-            dataBall.Dispose();
+            dataBall.Stop();
             barrier.RemoveParticipant();
         }
 
@@ -52,7 +52,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             lock (ballLock)
             {
                 WallCollision(e);
-                BallCollision();                
+                BallCollision();
                 NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
             }
             barrier.SignalAndWait();
@@ -72,7 +72,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             }
 
         }
-
         private void BallCollision()
         {
             foreach (Ball other in ballList)
@@ -91,55 +90,58 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 double euclideanDistance = Math.Sqrt(dx * dx + dy * dy);
                 double minDistance = (dataBall.Diameter + other.dataBall.Diameter) / 2;
 
-                if (euclideanDistance > 0 && euclideanDistance < minDistance)
+                if (euclideanDistance > 0 && euclideanDistance <= minDistance)
                 {
-
-                    double nx = dx / euclideanDistance;
-                    double ny = dy / euclideanDistance;
-
-                    //Velocity
-                    double v1x = dataBall.Velocity.x;
-                    double v1y = dataBall.Velocity.y;
-                    double v2x = other.dataBall.Velocity.x;
-                    double v2y = other.dataBall.Velocity.y;
-
-                    //Mass
-                    double m1 = dataBall.Mass;
-                    double m2 = other.dataBall.Mass;
-
-                    //product of Velocity and normal
-                    double v1n = v1x * nx + v1y * ny;
-                    double v2n = v2x * nx + v2y * ny;
-
-                    double v1nAfter = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2);
-                    double v2nAfter = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2);
-
-                    double dv1x = (v1nAfter - v1n) * nx;
-                    double dv1y = (v1nAfter - v1n) * ny;
-                    double dv2x = (v2nAfter - v2n) * nx;
-                    double dv2y = (v2nAfter - v2n) * ny;
-
-                    dataBall.Velocity.x += dv1x;
-                    dataBall.Velocity.y += dv1y;
-                    other.dataBall.Velocity.x += dv2x;
-                    other.dataBall.Velocity.y += dv2y;
-
-                    double overlap = minDistance - euclideanDistance;
-                    if (overlap > 0)
+                    lock (this)
                     {
-                        double adjustX = nx * overlap * 0.5;
-                        double adjustY = ny * overlap * 0.5;
+                        double nx = dx / euclideanDistance;
+                        double ny = dy / euclideanDistance;
 
-                        dataBall.Position.x += adjustX;
-                        dataBall.Position.y += adjustY;
-                        other.dataBall.Position.x -= adjustX;
-                        other.dataBall.Position.y -= adjustY;
+                        //Velocity
+                        double v1x = dataBall.Velocity.x;
+                        double v1y = dataBall.Velocity.y;
+                        double v2x = other.dataBall.Velocity.x;
+                        double v2y = other.dataBall.Velocity.y;
+
+                        //Mass
+                        double m1 = dataBall.Mass;
+                        double m2 = other.dataBall.Mass;
+
+                        //product of Velocity and normal
+                        double v1n = v1x * nx + v1y * ny;
+                        double v2n = v2x * nx + v2y * ny;
+
+                        double v1nAfter = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2);
+                        double v2nAfter = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2);
+
+                        double dv1x = (v1nAfter - v1n) * nx;
+                        double dv1y = (v1nAfter - v1n) * ny;
+                        double dv2x = (v2nAfter - v2n) * nx;
+                        double dv2y = (v2nAfter - v2n) * ny;
+
+                        dataBall.Velocity.x += dv1x;
+                        dataBall.Velocity.y += dv1y;
+                        other.dataBall.Velocity.x += dv2x;
+                        other.dataBall.Velocity.y += dv2y;
+
+                        double overlap = minDistance - euclideanDistance;
+                        if (overlap > 0)
+                        {
+                            double adjustX = nx * overlap * 0.5;
+                            double adjustY = ny * overlap * 0.5;
+
+                            dataBall.Position.x += adjustX;
+                            dataBall.Position.y += adjustY;
+                            other.dataBall.Position.x -= adjustX;
+                            other.dataBall.Position.y -= adjustY;
+                        }
                     }
+
+
                 }
-
             }
-        }
 
-        #endregion private
+            #endregion private
+        }
     }
 }
