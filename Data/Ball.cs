@@ -10,8 +10,8 @@
 
 namespace TP.ConcurrentProgramming.Data
 {
-  internal class Ball : IBall
-  {
+    internal class Ball : IBall
+    {
         private Vector position;
         private Vector velocity;
         private readonly object positionLock = new();
@@ -19,24 +19,25 @@ namespace TP.ConcurrentProgramming.Data
         #region ctor
 
         internal Ball(Vector initialPosition, Vector initialVelocity, double mass, double diameter)
-    {
-      position = initialPosition;
-      velocity = initialVelocity;
-      Mass = mass;
-      Diameter = diameter;
-      refreshTime = 20;
-      ThreadStart ts = new ThreadStart(threadLoop);
-      ballThread = new System.Threading.Thread(ts);
-      ballThread.Start();
-    }
+        {
+            position = initialPosition;
+            velocity = initialVelocity;
+            Mass = mass;
+            Diameter = diameter;
+            refreshTime = 20;
+            ThreadStart ts = new ThreadStart(threadLoop);
+            ballThread = new System.Threading.Thread(ts);
+            ballThread.Start();
+        }
 
-    #endregion ctor
+        #endregion ctor
 
-    #region IBall
+        #region IBall
 
-    public event EventHandler<IVector>? NewPositionNotification;
+        public event EventHandler<IVector>? NewPositionNotification;
 
-    public IVector Velocity { 
+        public IVector Velocity
+        {
             get
             {
                 lock (velocityLock)
@@ -48,29 +49,30 @@ namespace TP.ConcurrentProgramming.Data
             {
                 lock (velocityLock)
                 {
-                    velocity = (Vector) value;
+                    velocity = (Vector)value;
                 }
 
             }
         }
-    public IVector Position { 
+        public IVector Position
+        {
             get
             {
-                lock(positionLock)
+                lock (positionLock)
                 {
                     return position;
                 }
             }
         }
-    public double Mass { get; }
-    public double Diameter { get;  }
-    private int refreshTime;
+        public double Mass { get; }
+        public double Diameter { get; }
+        private int refreshTime;
         #endregion IBall
 
         #region private
         private Thread ballThread;
         private bool isRunning = true;
-        
+
 
         private void threadLoop()
         {
@@ -86,10 +88,10 @@ namespace TP.ConcurrentProgramming.Data
             isRunning = false;
         }
 
-    private void RaiseNewPositionChangeNotification()
-    {
-      NewPositionNotification?.Invoke(this, Position);
-    }
+        private void RaiseNewPositionChangeNotification()
+        {
+            NewPositionNotification?.Invoke(this, Position);
+        }
         private void ChangeRefreshTime()
         {
             lock (velocityLock)
@@ -101,19 +103,19 @@ namespace TP.ConcurrentProgramming.Data
                 double normalizedVelocity = Math.Clamp(accualVelocity, 0.0, 1.0);
                 refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)), minRefreshTime, maxRefreshTime);
             }
-            }
+        }
 
-        internal void Move()
-    {
-      ChangeRefreshTime();
+        private void Move()
+        {
+            ChangeRefreshTime();
             lock (positionLock)
             {
-                position = new Vector(Position.x + (Velocity.x * refreshTime / 1000), Position.y + (Velocity.y * refreshTime / 1000));
+                position = new Vector(position.x + (Velocity.x * refreshTime / 1000), position.y + (Velocity.y * refreshTime / 1000));
             }
-                RaiseNewPositionChangeNotification();
-            
-    }
+            RaiseNewPositionChangeNotification();
 
-    #endregion private
-  }
+        }
+
+        #endregion private
+    }
 }

@@ -44,13 +44,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         }
 
         private void RaisePositionChangeEvent(object? sender, Data.IVector e)
-        {
-            lock (ballLock)
-            {
+        {            
                 WallCollision(e);
                 BallCollision();
-                NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
-            }
+                NewPositionNotification?.Invoke(this, new Position(e.x, e.y));            
         }
         private void WallCollision(Data.IVector position)
         {

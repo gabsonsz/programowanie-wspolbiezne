@@ -28,8 +28,8 @@ namespace TP.ConcurrentProgramming.Data.Test
       IVector curentPosition = new Vector(0.0, 0.0);
       int numberOfCallBackCalled = 0;
       newInstance.NewPositionNotification += (sender, position) => { Assert.IsNotNull(sender); curentPosition = position; numberOfCallBackCalled++; };
-      newInstance.Move();
-      Assert.AreEqual<int>(1, numberOfCallBackCalled);
+      Thread.Sleep(150);
+      Assert.IsTrue(numberOfCallBackCalled>0);
       Assert.AreEqual<IVector>(initialPosition, curentPosition);
     }
   }

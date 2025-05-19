@@ -59,9 +59,7 @@ namespace TP.ConcurrentProgramming.Data
     IVector Velocity { get; set; }
     IVector Position { get;}
     double Diameter { get; }
-
-    double Mass { get; }
-    //double refreshTime {  get; set; }
+    double Mass { get; }    
     public void Stop();
 
 
