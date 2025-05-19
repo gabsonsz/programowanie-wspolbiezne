@@ -36,9 +36,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
                 this.Position = Position;
             }
 
-            public double Diameter { get; set; } = 20;
-            public double Mass { get; set; } = 100;
-      public Data.IVector Position { get; set; }
+            public double Diameter { get; } = 20;
+            public double Mass { get;} = 100;
+      public Data.IVector Position { get;  }
       public Data.IVector Velocity { get; set; }
 
       public event EventHandler<Data.IVector>? NewPositionNotification;
