@@ -67,68 +67,56 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             }
         }
         private void BallCollision()
-        {       
+        {
 
             foreach (Ball other in ballList)
             {
-                if (other == this) continue;
-
-                double x1 = dataBall.Position.x;
-                double y1 = dataBall.Position.y;
-
-                double x2 = other.dataBall.Position.x;
-                double y2 = other.dataBall.Position.y;
-
-                double dx = x1 - x2;
-                double dy = y1 - y2;
-
-                double euclideanDistance = Math.Sqrt(dx * dx + dy * dy);
-                double minDistance = (dataBall.Diameter + other.dataBall.Diameter) / 2;
-
-                if (euclideanDistance > 0 && euclideanDistance <= minDistance)
+                lock (ballLock)
                 {
-                    lock (ballLock)
+                    if (other == this) continue;
+
+                    double dx = dataBall.Position.x - other.dataBall.Position.x;
+                    double dy = dataBall.Position.y - other.dataBall.Position.y;
+
+                    double euclideanDistance = Math.Sqrt(dx * dx + dy * dy);
+                    double minDistance = (dataBall.Diameter + other.dataBall.Diameter) / 2;
+
+                    if (euclideanDistance > 0 && euclideanDistance <= minDistance)
                     {
+
                         double nx = dx / euclideanDistance;
                         double ny = dy / euclideanDistance;
 
-                        //Velocity
-                        double v1x = dataBall.Velocity.x;
-                        double v1y = dataBall.Velocity.y;
-                        double v2x = other.dataBall.Velocity.x;
-                        double v2y = other.dataBall.Velocity.y;
+
+                        //product of Velocity and normal
+                        double v1n = dataBall.Velocity.x * nx + dataBall.Velocity.y * ny;
+                        double v2n = other.dataBall.Velocity.x * nx + other.dataBall.Velocity.y * ny;
 
                         //Mass
                         double m1 = dataBall.Mass;
                         double m2 = other.dataBall.Mass;
 
-                        //product of Velocity and normal
-                        double v1n = v1x * nx + v1y * ny;
-                        double v2n = v2x * nx + v2y * ny;
-
                         double v1nAfter = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2);
                         double v2nAfter = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2);
 
-                        double dv1x = (v1nAfter - v1n) * nx;
-                        double dv1y = (v1nAfter - v1n) * ny;
-                        double dv2x = (v2nAfter - v2n) * nx;
-                        double dv2y = (v2nAfter - v2n) * ny;
+                        double tx = -ny;
+                        double ty = nx;
+                        double v1t = dataBall.Velocity.x * tx + dataBall.Velocity.y * ty;
+                        double v2t = other.dataBall.Velocity.x * tx + other.dataBall.Velocity.y * ty;
 
-                        dataBall.Velocity.x += dv1x;
-                        dataBall.Velocity.y += dv1y;
-                        other.dataBall.Velocity.x += dv2x;
-                        other.dataBall.Velocity.y += dv2y;
+                        dataBall.Velocity.x = v1nAfter * nx + v1t * tx;
+                        dataBall.Velocity.y = v1nAfter * ny + v1t * ty;
+                        other.dataBall.Velocity.x = v2nAfter * nx + v2t * tx;
+                        other.dataBall.Velocity.y = v2nAfter * ny + v2t * ty;
 
                         double overlap = minDistance - euclideanDistance;
                         if (overlap > 0)
                         {
-                            double adjustX = nx * overlap * 0.5;
-                            double adjustY = ny * overlap * 0.5;
-
-                            dataBall.Position.x += adjustX;
-                            dataBall.Position.y += adjustY;
-                            other.dataBall.Position.x -= adjustX;
-                            other.dataBall.Position.y -= adjustY;
+                            double adjust = overlap * 0.5;
+                            dataBall.Position.x += nx * adjust;
+                            dataBall.Position.y += ny * adjust;
+                            other.dataBall.Position.x -= nx * adjust;
+                            other.dataBall.Position.y -= ny * adjust;
                         }
                     }
                 }

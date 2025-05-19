@@ -17,11 +17,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
   {
         [TestMethod]
         public void MoveTestMethod()
-        {
-            Barrier barrier = new Barrier(1);
+        {            
             List<Ball> balls = new List<Ball>();
             DataBallFixture dataBallFixture = new DataBallFixture(new VectorFixture(0,0), new VectorFixture(0,0));
-            Ball newInstance = new(dataBallFixture, 400, 400, 50, balls, barrier);
+            Ball newInstance = new(dataBallFixture, 400, 400, 50, balls);
             int numberOfCallBackCalled = 0;
             newInstance.NewPositionNotification += (sender, position) => { Assert.IsNotNull(sender); Assert.IsNotNull(position); numberOfCallBackCalled++; };
             dataBallFixture.Move();

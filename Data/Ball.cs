@@ -53,7 +53,8 @@ namespace TP.ConcurrentProgramming.Data
 
             }
         }
-    public IVector Position { get
+    public IVector Position { 
+            get
             {
                 lock(positionLock)
                 {
@@ -91,14 +92,17 @@ namespace TP.ConcurrentProgramming.Data
     }
         private void ChangeRefreshTime()
         {
-            
-            double accualVelocity = Math.Sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
-            int maxRefreshTime = 100;
-            int minRefreshTime = 10;
+            lock (velocityLock)
+            {
+                double accualVelocity = Math.Sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
+                int maxRefreshTime = 100;
+                int minRefreshTime = 10;
 
-            double normalizedVelocity= Math.Clamp(accualVelocity, 0.0, 1.0);
-            refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)),minRefreshTime,maxRefreshTime);
-        }
+                double normalizedVelocity = Math.Clamp(accualVelocity, 0.0, 1.0);
+                refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)), minRefreshTime, maxRefreshTime);
+            }
+            }
+
         internal void Move()
     {
       ChangeRefreshTime();
