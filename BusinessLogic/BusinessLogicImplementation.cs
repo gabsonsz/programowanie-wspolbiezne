@@ -37,7 +37,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             {
                 ball.Stop();
             }
-            barrier?.Dispose();
             layerBellow.Dispose();
             Disposed = true;
         }
@@ -48,10 +47,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             if (upperLayerHandler == null)
                 throw new ArgumentNullException(nameof(upperLayerHandler));
-            barrier = new Barrier(numberOfBalls);
             layerBellow.Start(numberOfBalls, (startingPosition, databall) =>
             {
-                var ball = new Ball(databall, width, height, border, ballList, barrier);
+                var ball = new Ball(databall, width, height, border, ballList);
                 ballList.Add(ball);
                 upperLayerHandler(new Position(startingPosition.x, startingPosition.y), ball);
             });
@@ -62,7 +60,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         private bool Disposed = false;
         private List<Ball> ballList = new List<Ball>();
-        private Barrier barrier;
 
         private readonly UnderneathLayerAPI layerBellow;
 

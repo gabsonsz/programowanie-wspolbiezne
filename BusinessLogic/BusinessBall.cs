@@ -14,10 +14,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
         Data.IBall dataBall;
         List<Ball> ballList = new List<Ball>();
-        private Barrier barrier;
-        private static object ballLock = new object();
+        private readonly object ballLock = new();
 
-        public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls, Barrier barrier)
+        public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls)
         {
             dataBall = ball;
             TableWidth = tw;
@@ -25,7 +24,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             TableBorder = border;
             ball.NewPositionNotification += RaisePositionChangeEvent;
             ballList = otherBalls;
-            this.barrier = barrier;
 
         }
 
@@ -43,32 +41,33 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         internal void Stop()
         {
             dataBall.Stop();
-            barrier.RemoveParticipant();
         }
 
         private void RaisePositionChangeEvent(object? sender, Data.IVector e)
         {
-            //barrier.SignalAndWait();
             lock (ballLock)
             {
-                Collision(e);
+                WallCollision(e);
+                BallCollision();
                 NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
             }
-            //barrier.SignalAndWait();
-
-
         }
-        private void Collision(Data.IVector position)
+        private void WallCollision(Data.IVector position)
         {
-
-            if (position.x >= TableWidth - dataBall.Diameter - 2 * TableBorder || position.x <= 0)
+            lock (ballLock)
             {
-                dataBall.Velocity.x = -dataBall.Velocity.x;
+                if (position.x >= TableWidth - dataBall.Diameter - 2 * TableBorder || position.x <= 0)
+                {
+                    dataBall.Velocity.x = -dataBall.Velocity.x;
+                }
+                if (position.y >= TableHeight - dataBall.Diameter - 2 * TableBorder || position.y <= 0)
+                {
+                    dataBall.Velocity.y = -dataBall.Velocity.y;
+                }
             }
-            if (position.y >= TableHeight - dataBall.Diameter - 2 * TableBorder || position.y <= 0)
-            {
-                dataBall.Velocity.y = -dataBall.Velocity.y;
-            }
+        }
+        private void BallCollision()
+        {       
 
             foreach (Ball other in ballList)
             {
@@ -88,7 +87,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
                 if (euclideanDistance > 0 && euclideanDistance <= minDistance)
                 {
-                    lock (this)
+                    lock (ballLock)
                     {
                         double nx = dx / euclideanDistance;
                         double ny = dy / euclideanDistance;

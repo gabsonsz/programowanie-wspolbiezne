@@ -12,12 +12,16 @@ namespace TP.ConcurrentProgramming.Data
 {
   internal class Ball : IBall
   {
-    #region ctor
+        private Vector position;
+        private Vector velocity;
+        private readonly object positionLock = new();
+        private readonly object velocityLock = new();
+        #region ctor
 
-    internal Ball(Vector initialPosition, Vector initialVelocity, double mass, double diameter)
+        internal Ball(Vector initialPosition, Vector initialVelocity, double mass, double diameter)
     {
-      Position = initialPosition;
-      Velocity = initialVelocity;
+      position = initialPosition;
+      velocity = initialVelocity;
       Mass = mass;
       Diameter = diameter;
       refreshTime = 20;
@@ -32,12 +36,34 @@ namespace TP.ConcurrentProgramming.Data
 
     public event EventHandler<IVector>? NewPositionNotification;
 
-    public IVector Velocity { get; set; }
-    public IVector Position { get; set; }
+    public IVector Velocity { 
+            get
+            {
+                lock (velocityLock)
+                {
+                    return velocity;
+                }
+            }
+            set
+            {
+                lock (velocityLock)
+                {
+                    velocity = (Vector) value;
+                }
 
+            }
+        }
+    public IVector Position { get
+            {
+                lock(positionLock)
+                {
+                    return position;
+                }
+            }
+        }
     public double Mass { get; }
     public double Diameter { get;  }
-        private int refreshTime;
+    private int refreshTime;
         #endregion IBall
 
         #region private
@@ -65,18 +91,23 @@ namespace TP.ConcurrentProgramming.Data
     }
         private void ChangeRefreshTime()
         {
+            
             double accualVelocity = Math.Sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
             int maxRefreshTime = 100;
             int minRefreshTime = 10;
 
             double normalizedVelocity= Math.Clamp(accualVelocity, 0.0, 1.0);
-            refreshTime = (int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime));
+            refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)),minRefreshTime,maxRefreshTime);
         }
         internal void Move()
     {
-        ChangeRefreshTime();
-      Position = new Vector(Position.x + (Velocity.x*refreshTime/1000), Position.y + (Velocity.y*refreshTime/1000));
-      RaiseNewPositionChangeNotification();
+      ChangeRefreshTime();
+            lock (positionLock)
+            {
+                position = new Vector(Position.x + (Velocity.x * refreshTime / 1000), Position.y + (Velocity.y * refreshTime / 1000));
+            }
+                RaiseNewPositionChangeNotification();
+            
     }
 
     #endregion private
