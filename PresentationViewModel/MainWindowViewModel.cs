@@ -107,7 +107,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             {
                 if (!int.TryParse(BallCountInput, out int parsedValue))
                     return false;
-                return parsedValue > 0 && parsedValue <= 50;
+                return parsedValue > 0 && parsedValue <= 20;
             }
             return false;
         }

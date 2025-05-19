@@ -93,16 +93,13 @@ namespace TP.ConcurrentProgramming.Data
             NewPositionNotification?.Invoke(this, Position);
         }
         private void ChangeRefreshTime()
-        {
-            lock (velocityLock)
-            {
+        {            
                 double accualVelocity = Math.Sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
                 int maxRefreshTime = 100;
                 int minRefreshTime = 10;
 
                 double normalizedVelocity = Math.Clamp(accualVelocity, 0.0, 1.0);
-                refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)), minRefreshTime, maxRefreshTime);
-            }
+                refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)), minRefreshTime, maxRefreshTime);            
         }
 
         private void Move()
