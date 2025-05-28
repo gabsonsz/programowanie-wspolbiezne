@@ -53,11 +53,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         {
             lock (ballLock)
             {
-                if (position.x >= TableWidth - dataBall.Diameter - 2 * TableBorder || position.x <= 0)
+                if (position.x >= TableWidth - 20 - 2 * TableBorder || position.x <= 0)
                 {
                     dataBall.Velocity.x = -dataBall.Velocity.x;
                 }
-                if (position.y >= TableHeight - dataBall.Diameter - 2 * TableBorder || position.y <= 0)
+                if (position.y >= TableHeight - 20 - 2 * TableBorder || position.y <= 0)
                 {
                     dataBall.Velocity.y = -dataBall.Velocity.y;
                 }
@@ -65,18 +65,20 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         }
         private void BallCollision()
         {
+            double minDistance = 20;
 
             foreach (Ball other in ballList)
             {
                 lock (ballLock)
                 {
                     if (other == this) continue;
+                    Data.IVector currentPosition = other.dataBall.Position;
+                    Data.IVector currentVelocity = other.dataBall.Velocity;
 
-                    double dx = dataBall.Position.x - other.dataBall.Position.x;
-                    double dy = dataBall.Position.y - other.dataBall.Position.y;
+                    double dx = dataBall.Position.x - currentPosition.x;
+                    double dy = dataBall.Position.y - currentPosition.y;
 
-                    double euclideanDistance = Math.Sqrt(dx * dx + dy * dy);
-                    double minDistance = (dataBall.Diameter + other.dataBall.Diameter) / 2;
+                    double euclideanDistance = Math.Sqrt(dx * dx + dy * dy);                    
 
                     if (euclideanDistance > 0 && euclideanDistance <= minDistance)
                     {
@@ -87,24 +89,18 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
                         //product of Velocity and normal
                         double v1n = dataBall.Velocity.x * nx + dataBall.Velocity.y * ny;
-                        double v2n = other.dataBall.Velocity.x * nx + other.dataBall.Velocity.y * ny;
-
-                        //Mass
-                        double m1 = dataBall.Mass;
-                        double m2 = other.dataBall.Mass;
-
-                        double v1nAfter = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2);
-                        double v2nAfter = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2);
-
+                        double v2n = currentVelocity.x * nx + currentVelocity.y * ny;                                          
+                                               
+                        
                         double tx = -ny;
                         double ty = nx;
                         double v1t = dataBall.Velocity.x * tx + dataBall.Velocity.y * ty;
-                        double v2t = other.dataBall.Velocity.x * tx + other.dataBall.Velocity.y * ty;
+                        double v2t = currentVelocity.x * tx + currentVelocity.y * ty;
 
-                        dataBall.Velocity.x = v1nAfter * nx + v1t * tx;
-                        dataBall.Velocity.y = v1nAfter * ny + v1t * ty;
-                        other.dataBall.Velocity.x = v2nAfter * nx + v2t * tx;
-                        other.dataBall.Velocity.y = v2nAfter * ny + v2t * ty;
+                        dataBall.Velocity.x = v2n * nx + v1t * tx;
+                        dataBall.Velocity.y = v2n * ny + v1t * ty;
+                        other.dataBall.Velocity.x = v1n * nx + v2t * tx;
+                        other.dataBall.Velocity.y = v1n * ny + v2t * ty;
 
                         double overlap = minDistance - euclideanDistance;
                         if (overlap > 0)
@@ -112,8 +108,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                             double adjust = overlap * 0.5;
                             dataBall.Position.x += nx * adjust;
                             dataBall.Position.y += ny * adjust;
-                            other.dataBall.Position.x -= nx * adjust;
-                            other.dataBall.Position.y -= ny * adjust;
+                            currentPosition.x -= nx * adjust;
+                            currentPosition.y -= ny * adjust;
                         }
                     }
                 }

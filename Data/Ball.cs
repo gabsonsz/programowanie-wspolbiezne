@@ -18,12 +18,10 @@ namespace TP.ConcurrentProgramming.Data
         private readonly object velocityLock = new();
         #region ctor
 
-        internal Ball(Vector initialPosition, Vector initialVelocity, double mass, double diameter)
+        internal Ball(Vector initialPosition, Vector initialVelocity)
         {
             position = initialPosition;
-            velocity = initialVelocity;
-            Mass = mass;
-            Diameter = diameter;
+            velocity = initialVelocity;         
             refreshTime = 20;
             ThreadStart ts = new ThreadStart(threadLoop);
             ballThread = new System.Threading.Thread(ts);
