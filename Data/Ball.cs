@@ -61,9 +61,7 @@ namespace TP.ConcurrentProgramming.Data
                     return position;
                 }
             }
-        }
-        public double Mass { get; }
-        public double Diameter { get; }
+        }        
         private int refreshTime;
         #endregion IBall
 
