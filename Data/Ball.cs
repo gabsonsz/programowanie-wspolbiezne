@@ -21,8 +21,12 @@ namespace TP.ConcurrentProgramming.Data
         internal Ball(Vector initialPosition, Vector initialVelocity)
         {
             position = initialPosition;
-            velocity = initialVelocity;         
-            refreshTime = 20;
+            velocity = initialVelocity;
+            
+        }
+
+        public void Start()
+        {
             ThreadStart ts = new ThreadStart(threadLoop);
             ballThread = new System.Threading.Thread(ts);
             ballThread.Start();
@@ -61,21 +65,23 @@ namespace TP.ConcurrentProgramming.Data
                     return position;
                 }
             }
-        }        
-        private int refreshTime;
+        }
+
         #endregion IBall
 
         #region private
         private Thread ballThread;
         private bool isRunning = true;
-
+        private DateTime lastUpdateTime = DateTime.UtcNow;
 
         private void threadLoop()
         {
             while (isRunning)
             {
+                
                 Move();
-                Thread.Sleep(refreshTime);
+                
+                Thread.Sleep(5);
             }
         }
 
@@ -88,24 +94,40 @@ namespace TP.ConcurrentProgramming.Data
         {
             NewPositionNotification?.Invoke(this, Position);
         }
-        private void ChangeRefreshTime()
-        {            
-                double accualVelocity = Math.Sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
-                int maxRefreshTime = 100;
-                int minRefreshTime = 10;
+        //private void ChangeRefreshTime()
+        //{
+        //    DateTime now = DateTime.UtcNow;
+        //    double deltaTime = (now - lastUpdateTime).TotalSeconds; // Time elapsed in seconds
+        //    lastUpdateTime = now;
+        //    refreshTime = (int)deltaTime;
+        //    double accualVelocity = Math.Sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
+        //    int maxRefreshTime = 100;
+        //    int minRefreshTime = 10;
 
-                double normalizedVelocity = Math.Clamp(accualVelocity, 0.0, 1.0);
-                refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)), minRefreshTime, maxRefreshTime);            
-        }
+        //    double normalizedVelocity = Math.Clamp(accualVelocity, 0.0, 1.0);
+        //    refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)), minRefreshTime, maxRefreshTime);
+        //}
 
         private void Move()
         {
-            ChangeRefreshTime();
+            DateTime now = DateTime.UtcNow;
+            double deltaTime = (now - lastUpdateTime).TotalSeconds; // Time elapsed in seconds
+            lastUpdateTime = now;
+
             lock (positionLock)
             {
-                position = new Vector(position.x + (Velocity.x * refreshTime / 1000), position.y + (Velocity.y * refreshTime / 1000));
+                position = new Vector(
+                    position.x + (Velocity.x * deltaTime),
+                    position.y + (Velocity.y * deltaTime)
+                );
             }
+
             RaiseNewPositionChangeNotification();
+            //lock (positionLock)
+            //{
+            //    position = new Vector(position.x + (Velocity.x * refreshTime / 1000), position.y + (Velocity.y * refreshTime / 1000));
+            //}
+            //RaiseNewPositionChangeNotification();
 
         }
 

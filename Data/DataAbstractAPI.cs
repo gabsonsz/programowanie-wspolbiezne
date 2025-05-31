@@ -23,7 +23,7 @@ namespace TP.ConcurrentProgramming.Data
 
     #region public API
 
-    public abstract void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler);
+    public abstract void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler, IDataLogger logger);
 
     #endregion public API
 
@@ -59,6 +59,7 @@ namespace TP.ConcurrentProgramming.Data
     IVector Velocity { get; set; }
     IVector Position { get;}   
     public void Stop();
+    public void Start();
   }
 
   public interface IDataLogger
@@ -66,6 +67,8 @@ namespace TP.ConcurrentProgramming.Data
       void Log(IVector position, IVector velocity);
 
       static IDataLogger Instance() => DataLogger.LoggerInstance;
+
+        void Stop();
 
   }
 }

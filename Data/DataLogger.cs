@@ -11,7 +11,6 @@ namespace TP.ConcurrentProgramming.Data
     {
         private static readonly Lazy<DataLogger> instance = new Lazy<DataLogger>(() => new DataLogger("../../../../Data/diagnostic_log_file.json"));
 
-        private readonly object fileLock = new object();
         private readonly ConcurrentQueue<BallLog> queue;
         private readonly string filePath;
         private bool isRunning;
@@ -34,17 +33,17 @@ namespace TP.ConcurrentProgramming.Data
 
         private void movingQueue()
         {
-            while (isRunning)
+            while (isRunning || !queue.IsEmpty)
             {
                 logEvent.WaitOne();
 
                 while (queue.TryDequeue(out var ballLog))
                 {
+                    
                     string jsonString = JsonSerializer.Serialize(ballLog);
-                    lock (fileLock)
-                    {
-                        File.AppendAllText(filePath, jsonString + Environment.NewLine);
-                    }
+                
+                    File.AppendAllText(filePath, jsonString + Environment.NewLine);
+                    
                     
                 }
             }
@@ -60,7 +59,8 @@ namespace TP.ConcurrentProgramming.Data
 
         public void Log(IVector position, IVector velocity)
         {
-            isRunning = true;
+            //isRunning = true;
+            if (!isRunning) return;
 
             if (queue.Count < maxQueueSize)
             {
@@ -73,10 +73,12 @@ namespace TP.ConcurrentProgramming.Data
                 Debug.WriteLine("Queue is full");
             }
         }
-        private void Stop()
+        public void Stop()
         {
+            if (isRunning) return;
             isRunning = false;
             logEvent.Set();
+            thread.Join();
         }
 
         internal class BallLog
@@ -92,9 +94,6 @@ namespace TP.ConcurrentProgramming.Data
 
             }
         }
-
-        //public record BallPosition(float X, float Y);
-        //public record BallVelocity(float X, float Y);
 
     }
     

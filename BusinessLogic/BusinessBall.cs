@@ -15,18 +15,18 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     internal class Ball : IBall
     {
         Data.IBall dataBall;
-        List<Ball> ballList = new List<Ball>();
+        List<Ball> ballList;
         private readonly object ballLock = new();
 
-        public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls)
+        public Ball(Data.IBall ball, double tw, double th, double border, List<Ball> otherBalls, IDataLogger logger)
         {
+            this.logger = logger; 
             dataBall = ball;
             TableWidth = tw;
             TableHeight = th;
             TableBorder = border;
             ball.NewPositionNotification += RaisePositionChangeEvent;
             ballList = otherBalls;
-
         }
 
         #region IBall
@@ -40,20 +40,24 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         public double TableHeight { get; }
         public double TableBorder { get; }
 
-        private Data.IDataLogger logger = IDataLogger.Instance();
+        private IDataLogger logger;
 
         internal void Stop()
         {
             dataBall.Stop();
+            logger.Stop();
         }
-
-        private void RaisePositionChangeEvent(object? sender, Data.IVector e)
-        {            
+        internal void Start()
+        {
+            dataBall.Start();
+        }
+        private void RaisePositionChangeEvent(object? sender, IVector e)
+        {
                 WallCollision(e);
                 BallCollision();
-                NewPositionNotification?.Invoke(this, new Position(e.x, e.y));            
+                NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
         }
-        private void WallCollision(Data.IVector position)
+        private void WallCollision(IVector position)
         {
             lock (ballLock)
             {
@@ -79,8 +83,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 lock (ballLock)
                 {
                     if (other == this) continue;
-                    Data.IVector currentPosition = other.dataBall.Position;
-                    Data.IVector currentVelocity = other.dataBall.Velocity;
+                    IVector currentPosition = other.dataBall.Position;
+                    IVector currentVelocity = other.dataBall.Velocity;
 
                     double dx = dataBall.Position.x - currentPosition.x;
                     double dy = dataBall.Position.y - currentPosition.y;
