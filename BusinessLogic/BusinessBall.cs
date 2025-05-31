@@ -8,6 +8,8 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using TP.ConcurrentProgramming.Data;
+
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
     internal class Ball : IBall
@@ -38,6 +40,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         public double TableHeight { get; }
         public double TableBorder { get; }
 
+        private Data.IDataLogger logger = IDataLogger.Instance();
+
         internal void Stop()
         {
             dataBall.Stop();
@@ -56,10 +60,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 if (position.x >= TableWidth - 20 - 2 * TableBorder || position.x <= 0)
                 {
                     dataBall.Velocity.x = -dataBall.Velocity.x;
+                    logger.Log(dataBall.Position, dataBall.Velocity);
+
                 }
                 if (position.y >= TableHeight - 20 - 2 * TableBorder || position.y <= 0)
                 {
                     dataBall.Velocity.y = -dataBall.Velocity.y;
+                    logger.Log(dataBall.Position, dataBall.Velocity);
                 }
             }
         }
@@ -111,6 +118,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                             currentPosition.x -= nx * adjust;
                             currentPosition.y -= ny * adjust;
                         }
+                        logger.Log(dataBall.Position, dataBall.Velocity);
                     }
                 }
 
