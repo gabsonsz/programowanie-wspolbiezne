@@ -68,7 +68,7 @@ namespace TP.ConcurrentProgramming.Data
 
       static IDataLogger Instance() => DataLogger.LoggerInstance;
 
-        void Stop();
+      public void Stop();
 
   }
 }

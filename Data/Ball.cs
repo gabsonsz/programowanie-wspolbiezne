@@ -94,24 +94,11 @@ namespace TP.ConcurrentProgramming.Data
         {
             NewPositionNotification?.Invoke(this, Position);
         }
-        //private void ChangeRefreshTime()
-        //{
-        //    DateTime now = DateTime.UtcNow;
-        //    double deltaTime = (now - lastUpdateTime).TotalSeconds; // Time elapsed in seconds
-        //    lastUpdateTime = now;
-        //    refreshTime = (int)deltaTime;
-        //    double accualVelocity = Math.Sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
-        //    int maxRefreshTime = 100;
-        //    int minRefreshTime = 10;
-
-        //    double normalizedVelocity = Math.Clamp(accualVelocity, 0.0, 1.0);
-        //    refreshTime = Math.Clamp((int)(maxRefreshTime - normalizedVelocity * (maxRefreshTime - minRefreshTime)), minRefreshTime, maxRefreshTime);
-        //}
 
         private void Move()
         {
             DateTime now = DateTime.UtcNow;
-            double deltaTime = (now - lastUpdateTime).TotalSeconds; // Time elapsed in seconds
+            double deltaTime = (now - lastUpdateTime).TotalSeconds;
             lastUpdateTime = now;
 
             lock (positionLock)
@@ -121,14 +108,7 @@ namespace TP.ConcurrentProgramming.Data
                     position.y + (Velocity.y * deltaTime)
                 );
             }
-
             RaiseNewPositionChangeNotification();
-            //lock (positionLock)
-            //{
-            //    position = new Vector(position.x + (Velocity.x * refreshTime / 1000), position.y + (Velocity.y * refreshTime / 1000));
-            //}
-            //RaiseNewPositionChangeNotification();
-
         }
 
         #endregion private

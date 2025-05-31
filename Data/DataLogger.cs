@@ -1,9 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using System.Data;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Threading;
-
 
 namespace TP.ConcurrentProgramming.Data
 {
@@ -24,8 +21,6 @@ namespace TP.ConcurrentProgramming.Data
             logEvent = new AutoResetEvent(false);
             queue = new ConcurrentQueue<BallLog>();
 
-            Debug.WriteLine($"Powstał obiekt i będzie pisał do {filePath}");
-
             isRunning = true;
             thread = new Thread(movingQueue);
             thread.Start();
@@ -39,12 +34,9 @@ namespace TP.ConcurrentProgramming.Data
 
                 while (queue.TryDequeue(out var ballLog))
                 {
-                    
                     string jsonString = JsonSerializer.Serialize(ballLog);
                 
                     File.AppendAllText(filePath, jsonString + Environment.NewLine);
-                    
-                    
                 }
             }
         }
@@ -59,7 +51,6 @@ namespace TP.ConcurrentProgramming.Data
 
         public void Log(IVector position, IVector velocity)
         {
-            //isRunning = true;
             if (!isRunning) return;
 
             if (queue.Count < maxQueueSize)
