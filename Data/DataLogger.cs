@@ -6,9 +6,10 @@ namespace TP.ConcurrentProgramming.Data
 {
     internal class DataLogger : IDataLogger
     {
-        private static readonly Lazy<DataLogger> instance = new Lazy<DataLogger>(() => new DataLogger("../../../../Data/diagnostic_log_file.json"));
+        private static readonly Lazy<DataLogger> instance = new Lazy<DataLogger>(() => new DataLogger("../../../../DataLog/diagnostic_log_file.json"));
 
         private readonly ConcurrentQueue<BallLog> queue;
+        private readonly SemaphoreSlim semaphore;
         private readonly string filePath;
         private bool isRunning;
         private readonly Thread thread;
@@ -17,6 +18,7 @@ namespace TP.ConcurrentProgramming.Data
 
         private DataLogger(string path)
         {
+            semaphore = new SemaphoreSlim(maxQueueSize);
             filePath = path;
             logEvent = new AutoResetEvent(false);
             queue = new ConcurrentQueue<BallLog>();
@@ -37,6 +39,8 @@ namespace TP.ConcurrentProgramming.Data
                     string jsonString = JsonSerializer.Serialize(ballLog);
                 
                     File.AppendAllText(filePath, jsonString + Environment.NewLine);
+
+                    semaphore.Release();
                 }
             }
         }
@@ -53,10 +57,9 @@ namespace TP.ConcurrentProgramming.Data
         {
             if (!isRunning) return;
 
-            if (queue.Count < maxQueueSize)
+            if (semaphore.Wait(0))
             {
-                var logEntry = new BallLog(position, velocity, DateTime.UtcNow);
-                queue.Enqueue(logEntry);
+                queue.Enqueue(new BallLog(position, velocity, DateTime.UtcNow));
                 logEvent.Set();
             }
             else
@@ -66,7 +69,7 @@ namespace TP.ConcurrentProgramming.Data
         }
         public void Stop()
         {
-            if (isRunning) return;
+            if (!isRunning) return;
             isRunning = false;
             logEvent.Set();
             thread.Join();

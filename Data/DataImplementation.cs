@@ -14,15 +14,7 @@ using System.Diagnostics;
 namespace TP.ConcurrentProgramming.Data
 {
   internal class DataImplementation : DataAbstractAPI
-  {
-    #region ctor
-
-    //public DataImplementation()
-    //{
-    //  MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
-    //}
-
-    #endregion ctor
+  {    
 
     #region DataAbstractAPI
 
@@ -72,11 +64,8 @@ namespace TP.ConcurrentProgramming.Data
     #endregion IDisposable
 
     #region private
-
-    //private bool disposedValue;
     private bool Disposed = false;
-
-    //private readonly Timer MoveTimer;
+    
     private Random RandomGenerator = new();
     private List<Ball> BallsList = [];
                

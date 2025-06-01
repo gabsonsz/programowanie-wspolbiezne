@@ -8,7 +8,6 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using TP.ConcurrentProgramming.Data;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
