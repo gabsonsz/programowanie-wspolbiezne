@@ -30,7 +30,7 @@ namespace TP.ConcurrentProgramming.Data
         Vector startingPosition = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
         Vector startingSpeed = new(random.Next(-50,50), random.Next(-50, 50));
         Ball newBall = new(startingPosition, startingSpeed);
-        logger.Log(startingPosition, startingSpeed);
+        logger.Log("start", startingPosition, startingSpeed);
         upperLayerHandler(startingPosition, newBall);
         BallsList.Add(newBall);
       }

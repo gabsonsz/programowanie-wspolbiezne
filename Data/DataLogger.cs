@@ -53,13 +53,13 @@ namespace TP.ConcurrentProgramming.Data
             }
         }
 
-        public void Log(IVector position, IVector velocity)
+        public void Log(string operation, IVector position, IVector velocity)
         {
             if (!isRunning) return;
 
             if (semaphore.Wait(0))
             {
-                queue.Enqueue(new BallLog(position, velocity, DateTime.UtcNow));
+                queue.Enqueue(new BallLog(operation, position, velocity, DateTime.UtcNow));
                 logEvent.Set();
             }
             else
@@ -77,11 +77,14 @@ namespace TP.ConcurrentProgramming.Data
 
         internal class BallLog
         {
+
+            public string Operation { get; set; }
             public IVector Position { get; set; }
             public IVector Velocity { get; set; }
             public DateTime Time { get; set;  }
-            public BallLog(IVector position, IVector velocity, DateTime time)
+            public BallLog(string operation, IVector position, IVector velocity, DateTime time)
             {
+                Operation = operation;
                 Position = position;
                 Velocity = velocity;
                 Time = time;

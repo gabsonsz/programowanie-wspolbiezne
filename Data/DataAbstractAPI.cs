@@ -64,7 +64,7 @@ namespace TP.ConcurrentProgramming.Data
 
   public interface IDataLogger
   {
-      void Log(IVector position, IVector velocity);
+      void Log(string operation, IVector position, IVector velocity);
 
       static IDataLogger Instance() => DataLogger.LoggerInstance;
 

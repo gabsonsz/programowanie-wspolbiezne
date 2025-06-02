@@ -64,13 +64,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 if (position.x >= TableWidth - 20 - 2 * TableBorder || position.x <= 0)
                 {
                     dataBall.Velocity.x = -dataBall.Velocity.x;
-                    logger.Log(dataBall.Position, dataBall.Velocity);
+                    logger.Log("wall X collision", dataBall.Position, dataBall.Velocity);
 
                 }
                 if (position.y >= TableHeight - 20 - 2 * TableBorder || position.y <= 0)
                 {
                     dataBall.Velocity.y = -dataBall.Velocity.y;
-                    logger.Log(dataBall.Position, dataBall.Velocity);
+                    logger.Log("wall Y collision", dataBall.Position, dataBall.Velocity);
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                             currentPosition.x -= nx * adjust;
                             currentPosition.y -= ny * adjust;
                         }
-                        logger.Log(dataBall.Position, dataBall.Velocity);
+                        logger.Log("ball collision", dataBall.Position, dataBall.Velocity);
                     }
                 }
 
