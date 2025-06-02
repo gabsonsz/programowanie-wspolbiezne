@@ -74,7 +74,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
             {
 
             }
-            public void Log(IVector a, IVector b)
+            public void Log(string s,IVector a, IVector b)
             {
 
             }

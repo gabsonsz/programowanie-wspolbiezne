@@ -73,7 +73,7 @@ namespace TP.ConcurrentProgramming.Data.Test
             {
 
             }
-            public void Log(IVector a, IVector b)
+            public void Log(string s ,IVector a, IVector b)
             {
 
             }
