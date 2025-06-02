@@ -66,7 +66,7 @@ namespace TP.ConcurrentProgramming.Data
     #region private
     private bool Disposed = false;
     
-    private Random RandomGenerator = new();
+    //private Random RandomGenerator = new();
     private List<Ball> BallsList = [];
                
 

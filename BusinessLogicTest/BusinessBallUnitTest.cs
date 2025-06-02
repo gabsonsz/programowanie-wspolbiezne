@@ -8,19 +8,20 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
-using System.Numerics;
+using TP.ConcurrentProgramming.Data;
 
 namespace TP.ConcurrentProgramming.BusinessLogic.Test
 {
-  [TestClass]
-  public class BallUnitTest
-  {
+    [TestClass]
+    public class BallUnitTest
+    {
         [TestMethod]
         public void MoveTestMethod()
-        {            
+        {
+            LoggerFixture logger = new();
             List<Ball> balls = new List<Ball>();
-            DataBallFixture dataBallFixture = new DataBallFixture(new VectorFixture(0,0), new VectorFixture(0,0));
-            Ball newInstance = new(dataBallFixture, 400, 400, 50, balls);
+            DataBallFixture dataBallFixture = new DataBallFixture(new VectorFixture(0, 0), new VectorFixture(0, 0));
+            Ball newInstance = new(dataBallFixture, 400, 400, 50, balls, logger);
             int numberOfCallBackCalled = 0;
             newInstance.NewPositionNotification += (sender, position) => { Assert.IsNotNull(sender); Assert.IsNotNull(position); numberOfCallBackCalled++; };
             dataBallFixture.Move();
@@ -30,41 +31,57 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
         #region testing instrumentation
 
         private class DataBallFixture : Data.IBall
-    {
-            public DataBallFixture(Data.IVector Velocity, Data.IVector Position) {
+        {
+            public DataBallFixture(Data.IVector Velocity, Data.IVector Position)
+            {
                 this.Velocity = Velocity;
                 this.Position = Position;
             }
 
-            public double Diameter { get; } = 20;
-            public double Mass { get;} = 100;
-      public Data.IVector Position { get;  }
-      public Data.IVector Velocity { get; set; }
+            public Data.IVector Position { get; }
+            public Data.IVector Velocity { get; set; }
 
-      public event EventHandler<Data.IVector>? NewPositionNotification;
+            public event EventHandler<Data.IVector>? NewPositionNotification;
 
-      public void Stop()
-        {
+            public void Stop()
+            {
 
+            }
+            public void Start()
+            {
+
+            }
+
+            internal void Move()
+            {
+                NewPositionNotification?.Invoke(this, new VectorFixture(0.0, 0.0));
+            }
         }
 
-      internal void Move()
-      {
-        NewPositionNotification?.Invoke(this, new VectorFixture(0.0, 0.0));
-      }
-    }
+        private class VectorFixture : Data.IVector
+        {
+            internal VectorFixture(double X, double Y)
+            {
+                x = X; y = Y;
+            }
 
-    private class VectorFixture : Data.IVector
-    {
-      internal VectorFixture(double X, double Y)
-      {
-        x = X; y = Y;
-      }
+            public double x { get; set; }
+            public double y { get; set; }
+        }
+        private class LoggerFixture : Data.IDataLogger
+        {          
+            public void Stop()
+            {
 
-      public double x { get; set; }
-      public double y { get; set; }
-    }
+            }
+            public void Log(IVector a, IVector b)
+            {
 
-    #endregion testing instrumentation
-  }
+            }
+        }
+
+
+
+            #endregion testing instrumentation
+        }
 }
